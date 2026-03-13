@@ -1,0 +1,368 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Design tokens ──────────────────────────────────────────────────────── */
+:root {
+  --gold:          #c9a227;
+  --gold-hot:      #f5d050;
+  --gold-light:    #f0d060;
+  --gold-dim:      #7a5f10;
+  --gold-muted:    rgba(201,162,39,0.12);
+  --crimson:       #b91c1c;
+  --crimson-hot:   #ef4444;
+  --crimson-muted: rgba(185,28,28,0.12);
+  --ink:           #080604;
+  --ink-mid:       #130f0c;
+  --ink-lift:      #1e1712;
+  --ink-panel:     #161009;
+  --parchment:     #ede3cc;
+  --parchment-dim: #9e8d76;
+  --parchment-faint: rgba(237,227,204,0.06);
+  --radius-sm:     2px;
+  --font-d: var(--font-cinzel), serif;
+  --font-b: var(--font-crimson), serif;
+}
+
+/* ─── Reset & base ───────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: var(--ink);
+  color: var(--parchment);
+  font-family: var(--font-b);
+  min-height: 100dvh;
+  overflow-x: hidden;
+  position: relative;
+  /* Subtle diagonal line grid */
+  background-image:
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 60px,
+      rgba(201,162,39,0.015) 60px,
+      rgba(201,162,39,0.015) 61px
+    );
+}
+
+/* Film grain */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.055'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 999;
+  opacity: 0.5;
+  mix-blend-mode: overlay;
+}
+
+/* ─── Typography utils ───────────────────────────────────────────────────── */
+.f-display { font-family: var(--font-d); }
+.f-body    { font-family: var(--font-b); }
+
+.micro-label {
+  font-family: var(--font-d);
+  font-size: 0.52rem;
+  letter-spacing: 0.38em;
+  text-transform: uppercase;
+  color: var(--parchment-dim);
+  opacity: 0.55;
+}
+
+/* ─── Gold shimmer text ──────────────────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+.text-shimmer {
+  background: linear-gradient(90deg,
+    var(--gold-dim) 0%,
+    var(--gold-hot) 38%,
+    #fff8e1 50%,
+    var(--gold-hot) 62%,
+    var(--gold-dim) 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 3.5s linear infinite;
+}
+
+/* ─── Brush divider ──────────────────────────────────────────────────────── */
+.brush-rule {
+  height: 2px;
+  border: none;
+  opacity: 0.5;
+  background: linear-gradient(90deg, transparent, var(--gold), var(--crimson), var(--gold), transparent);
+}
+
+/* ─── Ambient glow orbs ──────────────────────────────────────────────────── */
+@keyframes orbDrift {
+  0%   { transform: translate(0,    0px) scale(1);    }
+  100% { transform: translate(10px,-20px) scale(1.06); }
+}
+.orb {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  will-change: transform;
+}
+.orb-gold {
+  background: radial-gradient(circle, rgba(201,162,39,0.18) 0%, transparent 70%);
+  filter: blur(60px);
+  animation: orbDrift 10s ease-in-out infinite alternate;
+}
+.orb-crimson {
+  background: radial-gradient(circle, rgba(185,28,28,0.14) 0%, transparent 70%);
+  filter: blur(70px);
+  animation: orbDrift 13s ease-in-out infinite alternate-reverse;
+}
+
+/* ─── Hero glow halo ─────────────────────────────────────────────────────── */
+.hero-glow {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px; height: 300px;
+  background: radial-gradient(ellipse, rgba(201,162,39,0.07) 0%, transparent 70%);
+  pointer-events: none;
+  filter: blur(30px);
+}
+
+/* ─── Input styling ──────────────────────────────────────────────────────── */
+.dojo-input {
+  width: 100%;
+  background: var(--ink-panel);
+  border: 1px solid rgba(201,162,39,0.2);
+  color: var(--parchment);
+  font-family: var(--font-b);
+  font-size: 1.05rem;
+  padding: 14px 18px;
+  outline: none;
+  border-radius: var(--radius-sm);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  -webkit-appearance: none;
+}
+.dojo-input::placeholder { color: var(--parchment-dim); opacity: 0.4; }
+.dojo-input:hover  { border-color: rgba(201,162,39,0.35); }
+.dojo-input:focus  {
+  border-color: rgba(201,162,39,0.6);
+  box-shadow: 0 0 0 1px rgba(201,162,39,0.15), 0 0 20px rgba(201,162,39,0.12);
+}
+.dojo-input-crimson:hover { border-color: rgba(185,28,28,0.4); }
+.dojo-input-crimson:focus {
+  border-color: rgba(185,28,28,0.65);
+  box-shadow: 0 0 0 1px rgba(185,28,28,0.15), 0 0 20px rgba(185,28,28,0.12);
+}
+
+/* ─── Battle button ──────────────────────────────────────────────────────── */
+@keyframes battleGlow {
+  0%, 100% { box-shadow: 0 0 16px 2px rgba(185,28,28,0.3), inset 0 1px 0 rgba(255,255,255,0.05); }
+  50%       { box-shadow: 0 0 36px 8px rgba(185,28,28,0.55), inset 0 1px 0 rgba(255,255,255,0.05); }
+}
+.btn-battle {
+  position: relative;
+  width: 100%;
+  background: linear-gradient(180deg, #c41e1e 0%, #8b1111 100%);
+  border: 1px solid rgba(239,68,68,0.5);
+  border-bottom: 2px solid rgba(120,0,0,0.8);
+  color: #fff;
+  font-family: var(--font-d);
+  font-size: clamp(0.75rem, 2.5vw, 0.9rem);
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  padding: 18px 32px;
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  animation: battleGlow 2.6s ease-in-out infinite;
+  transition: transform 0.12s ease, filter 0.12s ease;
+}
+.btn-battle:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.12);
+}
+.btn-battle:active:not(:disabled) {
+  transform: translateY(1px) scale(0.985);
+  filter: brightness(0.92);
+}
+.btn-battle:disabled {
+  animation: none;
+  background: var(--ink-lift);
+  border-color: rgba(255,255,255,0.06);
+  color: var(--parchment-dim);
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+/* Shimmer sweep */
+.btn-battle::after {
+  content: "";
+  position: absolute;
+  top: 0; left: -100%;
+  width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.5s ease;
+}
+.btn-battle:hover:not(:disabled)::after { left: 150%; }
+
+/* ─── Mode toggle ────────────────────────────────────────────────────────── */
+.mode-btn {
+  position: relative;
+  border: 1px solid;
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  transition: transform 0.12s ease, filter 0.12s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.mode-btn:hover:not([aria-pressed="true"]) { transform: translateY(-2px); filter: brightness(1.1); }
+.mode-btn:active { transform: scale(0.975); }
+.mode-btn-active-bar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  border-radius: 0;
+}
+
+/* ─── Share buttons ──────────────────────────────────────────────────────── */
+.share-btn {
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-family: var(--font-d);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  transition: transform 0.1s ease, filter 0.1s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.share-btn:hover  { transform: translateY(-2px); filter: brightness(1.15); }
+.share-btn:active { transform: scale(0.95); filter: brightness(0.9); }
+
+/* ─── Result card ────────────────────────────────────────────────────────── */
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(32px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+@keyframes staggerIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes winnerDrop {
+  0%   { opacity: 0; transform: scale(0.85) translateY(12px); }
+  60%  { transform: scale(1.03) translateY(-3px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes rareSlide {
+  from { opacity: 0; transform: translateX(-24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes flashPop {
+  0%   { opacity: 0.3; }
+  100% { opacity: 0; }
+}
+
+/* ─── Shake on reveal ────────────────────────────────────────────────────── */
+@keyframes dojoShake {
+  0%,100% { transform: translateX(0) rotate(0); }
+  16%     { transform: translateX(-6px) rotate(-0.5deg); }
+  33%     { transform: translateX(5px)  rotate(0.4deg); }
+  50%     { transform: translateX(-4px) rotate(-0.3deg); }
+  67%     { transform: translateX(4px)  rotate(0.3deg); }
+  83%     { transform: translateX(-2px); }
+}
+.dojo-shake { animation: dojoShake 0.42s cubic-bezier(0.36,0.07,0.19,0.97) both; }
+
+.result-flash {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 30%, rgba(201,162,39,0.3) 0%, transparent 65%);
+  animation: flashPop 0.65s ease forwards;
+  z-index: 20;
+  border-radius: var(--radius-sm);
+}
+
+/* ─── Loading ────────────────────────────────────────────────────────────── */
+@keyframes loadSweep {
+  0%   { width: 0%;  opacity: 1; }
+  75%  { width: 88%; opacity: 1; }
+  100% { width: 94%; opacity: 0.5; }
+}
+.load-bar-fill { animation: loadSweep 1.15s cubic-bezier(0.4,0,0.2,1) forwards; }
+
+@keyframes breathe {
+  0%, 100% { opacity: 1;   transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.96); }
+}
+.loading-vs { animation: breathe 1.3s ease-in-out infinite; }
+
+@keyframes skelPulse {
+  0%, 100% { opacity: 0.12; }
+  50%       { opacity: 0.32; }
+}
+.skel { animation: skelPulse 1.4s ease-in-out infinite; background: var(--parchment-dim); border-radius: 2px; }
+
+/* ─── Drift (hero) ───────────────────────────────────────────────────────── */
+@keyframes heroDrift {
+  0%   { transform: translateY(0)    rotate(-0.5deg); }
+  100% { transform: translateY(-8px) rotate(0.5deg); }
+}
+.hero-float { animation: heroDrift 7s ease-in-out infinite alternate; }
+
+/* ─── Pulse (crown, rare bar) ────────────────────────────────────────────── */
+@keyframes pulse {
+  0%,100% { opacity: 1; }
+  50%      { opacity: 0.55; }
+}
+.pulse-slow { animation: pulse 2.4s ease-in-out infinite; }
+
+/* ─── Fighter input responsive grid ─────────────────────────────────────── */
+.fighter-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+/* Stack inputs on very small screens */
+@media (max-width: 380px) {
+  .fighter-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ─── iOS tap highlight removal ─────────────────────────────────────────── */
+button, input {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ─── Input font size — prevent iOS zoom on focus (must be ≥ 16px) ──────── */
+.dojo-input {
+  font-size: max(16px, 1.05rem);
+}
+
+/* ─── Safe area padding for iPhone notch ────────────────────────────────── */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  footer {
+    padding-bottom: calc(32px + env(safe-area-inset-bottom));
+  }
+}
+
+/* ─── Sensei comment reveal ──────────────────────────────────────────────── */
+@keyframes senseiReveal {
+  from { opacity: 0; transform: translateY(10px); filter: blur(2px); }
+  to   { opacity: 1; transform: translateY(0);    filter: blur(0); }
+}
+
+/* ─── Cat fighter animations ─────────────────────────────────────────────── */
+@keyframes catFloat {
+  0%   { transform: translateY(0) rotate(-1deg); }
+  100% { transform: translateY(-7px) rotate(1deg); }
+}
+@keyframes catDefeated {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(12deg) translateY(4px); }
+}
